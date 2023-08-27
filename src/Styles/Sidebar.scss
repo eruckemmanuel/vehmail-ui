@@ -1,0 +1,26 @@
+.site-layout .site-layout-background {
+    background: #fff;
+ }
+
+ .ant-layout-sider-children {
+    background: #f4f4f4;
+ }
+
+ .ant-menu-submenu > .ant-menu {
+    background: #f4f4f4;
+ }
+
+ .ant-menu-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+ }
+
+ span {
+    padding-left: 6px;
+ }
+
+   a {
+      color: inherit;
+   }
+

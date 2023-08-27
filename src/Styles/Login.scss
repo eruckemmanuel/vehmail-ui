@@ -1,0 +1,25 @@
+.login-form-container {
+    svg {
+        position: relative;
+        right: 12px;
+    }
+}
+
+.login-form {
+        position: absolute;
+        top: 35%;
+        left: 50%;
+        margin-right: -50%;
+        transform: translate(-50%, -50%);
+        border: 1px solid #7c7c7c;
+        padding: 20px 50px 10px 50px;
+        border-radius: 2%;
+}
+
+h1 {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
