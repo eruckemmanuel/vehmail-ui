@@ -1,0 +1,40 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: build_dependencies
+    image: node:14.21.3
+    commands:
+      - npm install
+
+  - name: build_app
+    image: node:14.21.3
+    detach: true
+    commands:
+      - npm install
+      - npm run build
+
+  - name: notify_team_on_status
+    image: plugins/webhook
+    settings:
+      urls: https://chat.vehseh.com/hooks/yrfqwctprtr13fw4px56qsfijh
+      method: POST
+      template: '{
+          "attachments": [
+            {
+              "color": "{{#success build.status }}#4BB543{{else}}#ff3333{{/success}}",
+              "pretext": "@here, Build `{{build.status}}` {{#success build.status }} :white_check_mark: {{else}} :x: {{/success}} for `{{repo.name}}`, URL: {{build.link}}",
+              "fallback": "@here, Build `{{build.status}}` {{#success build.status }} :white_check_mark: {{else}} :x: {{/success}} for `{{repo.name}}`, URL: {{build.link}}",
+              "author_name": "${DRONE_COMMIT_AUTHOR_NAME} @${DRONE_COMMIT_AUTHOR}",
+              "title": "Target Branch: `${DRONE_TARGET_BRANCH}`, Source Branch: `${DRONE_SOURCE_BRANCH}` COMMIT: ${DRONE_COMMIT_LINK}"
+            }
+          ]
+        }'
+
+    when:
+      status:
+        - failure
+        - success
+      branch:
+        master

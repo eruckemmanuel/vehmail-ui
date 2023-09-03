@@ -3,9 +3,9 @@ import { Card } from 'antd';
 
 const Cards = (props) => {
     return (
-        <div className="site-card-border-less-wrapper" >
+        <div className="" >
             <Card title={props.subject} bordered={false} style={{ height: '100vh' }}>
-                <p> {props.body}</p>
+                <div dangerouslySetInnerHTML={{__html: props.body}}></div>
             </Card>
         </div>
     );
