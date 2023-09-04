@@ -1,6 +1,6 @@
 import React from "react";
 import { List, Avatar, Space } from "antd";
-import { getAllThreadParticipants } from "../common/utils";
+import { getAllThreadParticipants, getFormattedDate } from "../common/utils";
 
 const Lists = (props) => {
   const data = props.inbox.map((threads) => {
@@ -8,9 +8,10 @@ const Lists = (props) => {
       key: threads[0].message_id,
       title:
         getAllThreadParticipants(threads).names.toString() +
-        ` (${threads.length > 1 ? threads.length : ""})`,
+        `${threads.length > 1 ? " (" + threads.length + ")" : ""}`,
       subject: threads[0].subject,
       messages: threads,
+      date: threads[threads.length - 1].date,
     };
   });
 
@@ -20,7 +21,13 @@ const Lists = (props) => {
       dataSource={data}
       renderItem={(item) => (
         <a onClick={props.handleClick.bind(this, item.messages)}>
-          <List.Item>
+          <List.Item
+            extra={
+              <small style={{ fontSize: "11px" }}>
+                {getFormattedDate(item.date)}
+              </small>
+            }
+          >
             <List.Item.Meta
               rowkey={item.key}
               key={item.key}

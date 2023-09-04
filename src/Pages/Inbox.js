@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Redirect } from "react-router-dom";
 import axios from "../axios/axios";
-import { Layout, Card } from "antd";
+import { Layout, Pagination } from "antd";
 import Sidebar from "../Components/Sidebar";
 import Lists from "../Components/Lists";
 import MessageThreads from "../Components/MessageThreads";
+import Loader from "../Components/Loader";
 
 const { Content } = Layout;
 
@@ -13,8 +14,8 @@ const Inbox = () => {
 
   const [mails, setMails] = useState([]);
   const [messages, setMessages] = useState([]);
-
-  console.log(messages);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   const handleClick = (messages) => {
     setMessages(messages);
@@ -32,19 +33,22 @@ const Inbox = () => {
   }, [messages]);
 
   useEffect(() => {
+    setLoading(true);
     axios
-      .get("/api/v1/mail/?page=12", {
+      .get(`/api/v1/mail/?page=${page}`, {
         headers: {
           Authorization: "Token " + token,
         },
       })
       .then((response) => {
-        setMails(response.data.data);
+        setLoading(false);
+        setMails(response.data);
       })
       .catch((err) => {
+        setLoading(false);
         console.log(err);
       });
-  }, []);
+  }, [page]);
 
   if (token === null) {
     return <Redirect to="/login" />;
@@ -73,12 +77,30 @@ const Inbox = () => {
                     zIndex: "160",
                   }}
                 >
-                  <div className="">
-                    <span style={{ fontSize: 16 }}>Inbox</span>
-                  </div>
+                  {mails?.data?.length > 0 && (
+                    <div>
+                      <Pagination
+                        size="small"
+                        showLessItems
+                        defaultPageSize={15}
+                        current={mails.page_number}
+                        onChange={(page) => {
+                          setPage(page);
+                        }}
+                        total={mails.count}
+                      />
+                    </div>
+                  )}
+                  {loading && (
+                    <div style={{ position: "fixed", left: "20%", top: "15%" }}>
+                      <Loader height="30px" />
+                    </div>
+                  )}
                 </div>
               </>
-              <Lists inbox={mails} handleClick={handleClick} />
+              {mails?.data?.length > 0 && (
+                <Lists inbox={mails?.data} handleClick={handleClick} />
+              )}
             </Content>
 
             <Content

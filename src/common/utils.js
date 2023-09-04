@@ -13,18 +13,15 @@ export const getDateMinute = (date) => {
 export const getFormattedDate = (dateStr) => {
   const date = new Date(dateStr);
   if (dateIsToday(date)) {
-    return `${getDateMinute(date)}:${getDateMinute()}`;
+    return `Today, ${getDateHour(date)}:${getDateMinute(date)}`;
   }
   return date.toDateString();
 };
 
 export const getNameFromEmail = (email) => {
-  const name = email.split("@")[0];
+  const emailParts = email.split("@");
+  const name = emailParts[0];
   return name[0].toUpperCase() + name.substring(1);
-};
-
-export const getDisplayNameFromAddressArray = (addressArray) => {
-  return addressArray[0][0] || addressArray;
 };
 
 export const getAllThreadParticipants = (thread) => {
@@ -33,8 +30,7 @@ export const getAllThreadParticipants = (thread) => {
   const namesAndEmails = [];
   thread.forEach((item) => {
     const email = item.from[0][1];
-    const name =
-      item.from[0][0] || getDisplayNameFromAddressArray(item.from[0][1]);
+    const name = item.from[0][0] || getNameFromEmail(item.from[0][1]);
     if (!participants.includes(email)) {
       participants.push(email);
       names.push(name);

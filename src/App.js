@@ -15,9 +15,9 @@ import { getCurrentUser } from "./common/auth";
 function App() {
   const [ready, setReady] = useState(false);
 
-  useEffect(async () => {
+  useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token && window.location.pathname !== "/") {
+    const setupUser = async () => {
       const user = await getCurrentUser();
       if (user) {
         localStorage.setItem("token", user.token);
@@ -28,6 +28,10 @@ function App() {
           `/auth/user/login/?next=${window.location.pathname}`,
         );
       }
+    };
+
+    if (!token && window.location.pathname !== "/") {
+      setupUser();
     } else {
       setReady(true);
     }
