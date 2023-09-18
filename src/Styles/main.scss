@@ -15,6 +15,7 @@ $message-body-radius: 2px;
 $message-body-padding: 0.7em;
 $message-body-color: #353636 !important;
 @import "../../node_modules/bulma/bulma";
+@import "../../node_modules/bulma-list/sass/bulma-list";
 @import url('https://fonts.googleapis.com/css2?family=Cabin&display=swap');
 $main-font: 'Cabin' sans-serif;
 * {

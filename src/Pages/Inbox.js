@@ -12,20 +12,53 @@ const { Content } = Layout;
 const Inbox = () => {
   const token = localStorage.getItem("token");
 
-  const [mails, setMails] = useState([]);
+  const [mails, setMails] = useState({});
   const [messages, setMessages] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [loadingDetails, setLoadingDetails] = useState(false);
+  const [selectedThread, setSelectedThread] = useState(null);
 
-  const handleClick = (messages) => {
-    setMessages(messages);
+  const handleClick = (threads) => {
+    if (selectedThread === threads) {
+      return;
+    }
+
+    const uuids = [];
+    threads.forEach((msg) => {
+      uuids.push(msg.uuid);
+      msg.seen = true;
+    });
+    setLoadingDetails(true);
+    axios
+      .get(`/api/v1/messages/?thread_uuids=${uuids.join(",")}`, {
+        headers: {
+          Authorization: "Token " + token,
+        },
+      })
+      .then((response) => {
+        setLoadingDetails(false);
+        setMessages(response.data);
+        const newMailsData = mails.data.map((item) => {
+          if (item === threads) {
+            return threads;
+          }
+          return item;
+        });
+        setSelectedThread(threads);
+        setMails({ ...mails, data: newMailsData });
+      })
+      .catch((err) => {
+        setLoadingDetails(false);
+        console.log(err);
+      });
   };
 
   useEffect(() => {
     if (messages) {
       messages.forEach((msg) => {
         const shadowRoot = document
-          .getElementById(msg.message_id)
+          .getElementById(`${msg.message_id}-${msg.uuid}-${msg.id}`)
           .attachShadow({ mode: "open" });
         shadowRoot.innerHTML = msg.text_html[0] || msg.text_plain[0];
       });
@@ -92,7 +125,7 @@ const Inbox = () => {
                     </div>
                   )}
                   {loading && (
-                    <div style={{ position: "fixed", left: "20%", top: "15%" }}>
+                    <div style={{ position: "fixed", left: "22%", top: "15%" }}>
                       <Loader height="30px" />
                     </div>
                   )}
@@ -111,6 +144,19 @@ const Inbox = () => {
                 padding: "25px",
               }}
             >
+              {loadingDetails && (
+                <div
+                  style={{
+                    width: "100%",
+                    marginTop: "200px",
+                    marginLeft: "30%",
+                    position: "absolute",
+                    zIndex: 1000,
+                  }}
+                >
+                  <Loader />
+                </div>
+              )}
               {messages && messages.length > 0 && (
                 <div>
                   <div

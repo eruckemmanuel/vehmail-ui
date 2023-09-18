@@ -89,7 +89,7 @@ export default function MessageThreads({ messages }) {
               <div
                 style={{ overflow: "hidden", wordWrap: "break-word" }}
                 className="card-body"
-                id={msg.message_id}
+                id={`${msg.message_id}-${msg.uuid}-${msg.id}`}
               ></div>
             </div>
           </div>

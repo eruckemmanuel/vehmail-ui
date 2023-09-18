@@ -29,8 +29,8 @@ export const getAllThreadParticipants = (thread) => {
   const names = [];
   const namesAndEmails = [];
   thread.forEach((item) => {
-    const email = item.from[0][1];
-    const name = item.from[0][0] || getNameFromEmail(item.from[0][1]);
+    const email = item.sender[0][1];
+    const name = item.sender[0][0] || getNameFromEmail(item.sender[0][1]);
     if (!participants.includes(email)) {
       participants.push(email);
       names.push(name);
